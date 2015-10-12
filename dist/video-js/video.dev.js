@@ -2160,7 +2160,7 @@ vjs.Component.prototype.addChild = function(child, options){
     // If there's no .player_, this is a player
     // Closure Compiler throws an 'incomplete alias' warning if we use the vjs variable directly.
     // Every class should be exported, so this should never be a problem here.
-    component = new videojs[componentClass](this.player_ || this, options);
+    component = new window['videojs'][componentClass](this.player_ || this, options);
 
   // child is a component instance
   } else {
@@ -4034,7 +4034,7 @@ vjs.Player.prototype.loadTech = function(techName, source){
   }
 
   // Initialize tech instance
-  this.tech = new videojs[techName](this, techOptions);
+  this.tech = new window['videojs'][techName](this, techOptions);
 
   this.tech.ready(techReady);
 };
@@ -4780,7 +4780,7 @@ vjs.Player.prototype.selectSource = function(sources){
   // Loop through each playback technology in the options order
   for (var i=0,j=this.options_['techOrder'];i<j.length;i++) {
     var techName = vjs.capitalize(j[i]),
-        tech = videojs[techName];
+        tech = window['videojs'][techName];
 
     // Check if the current tech is defined before continuing
     if (!tech) {
@@ -4855,7 +4855,7 @@ vjs.Player.prototype.src = function(source){
   } else if (source instanceof Object) {
     // check if the source has a type and the loaded tech cannot play the source
     // if there's no type we'll just try the current tech
-    if (source.type && !videojs[this.techName]['canPlaySource'](source)) {
+    if (source.type && !window['videojs'][this.techName]['canPlaySource'](source)) {
       // create a source list with the current source and send through
       // the tech loop to check for a compatible technology
       this.sourceList_([source]);
@@ -4870,7 +4870,7 @@ vjs.Player.prototype.src = function(source){
         // so older techs won't support it
         // We need to check the direct prototype for the case where subclasses
         // of the tech do not support source handlers
-        if (videojs[this.techName].prototype.hasOwnProperty('setSource')) {
+        if (window['videojs'][this.techName].prototype.hasOwnProperty('setSource')) {
           this.techCall('setSource', source);
         } else {
           this.techCall('src', source.src);
@@ -7410,9 +7410,7 @@ vjs.Html5.prototype.setSrc = function(src) {
   this.el_.src = src;
 };
 
-vjs.Html5.prototype.load = function(){ 
-  this.el_.load(); 
-};
+vjs.Html5.prototype.load = function(){ this.el_.load(); };
 vjs.Html5.prototype.currentSrc = function(){
   var elementSrc = this.el_.currentSrc;
 
@@ -8328,7 +8326,7 @@ vjs.MediaLoader = vjs.Component.extend({
     if (!player.options_['sources'] || player.options_['sources'].length === 0) {
       for (var i=0,j=player.options_['techOrder']; i<j.length; i++) {
         var techName = vjs.capitalize(j[i]),
-            tech = videojs[techName];
+            tech = window['videojs'][techName];
 
         // Check if the browser supports this technology
         if (tech && tech.isSupported()) {
